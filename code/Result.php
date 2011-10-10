@@ -3,14 +3,17 @@
 class oEmbed_Result extends ViewableData {
 	protected $data = false;
 	protected $origin = false;
+	protected $type = false;
 	protected $url;
 	
 	public static $casting = array(
 		'html' => 'HTMLText',
 	);
 	
-	public function __construct($url, $origin = false) {
+	public function __construct($url, $origin = false, $type = false) {
 		$this->url = $url;
+		$this->origin = $origin;
+		$this->type = $type;
 		
 		parent::__construct();
 	}
@@ -33,6 +36,9 @@ class oEmbed_Result extends ViewableData {
 		foreach($data as $k=>$v) {
 			unset($data[$k]);
 			$data[strtolower($k)] = $v;
+		}
+		if($this->type && $this->type != $data['type']) {
+			$data = array();
 		}
 		$this->data = $data;
 	}
@@ -63,5 +69,10 @@ class oEmbed_Result extends ViewableData {
 				return "<img src='$this->URL' width='$this->Width' height='$this->Height' />";
 				break;
 		}
+	}
+	
+	public function exists() {
+		$this->loadData();
+		return count($this->data) > 0;
 	}
 }

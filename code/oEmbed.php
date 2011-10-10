@@ -76,7 +76,7 @@ class oEmbed {
 		return false;
 	}
 	
-	public static function get_oembed_from_url($url) {
+	public static function get_oembed_from_url($url, $type = false) {
 		$endpoint = static::match_url($url);
 		$ourl = false;
 		if(!$endpoint) {
@@ -89,7 +89,7 @@ class oEmbed {
 			$ourl = Controller::join_links($endpoint, '?format=json&url=' . rawurlencode($url));
 		}
 		if($ourl) {
-			return new oEmbed_Result($ourl, $url);
+			return new oEmbed_Result($ourl, $url, $type);
 		}
 		return false;
 	}
