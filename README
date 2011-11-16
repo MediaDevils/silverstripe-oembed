@@ -1,0 +1,16 @@
+====================================
+ oEmbed Module 1.0 For SilverStripe
+====================================
+Developed and maintained by RentBox
+ support@rentbox.co.nz/@rentboxapp
+====================================
+
+Installation:
+- Extract oembed folder to your site root
+
+Optional:
+- Add further oEmbed providers (see oembed/
+_config.php for the format)
+- Add oEmbed::set_autodiscover_fallback(true);
+to your _config.php to set all URLs to default
+to fallback rather than no lookup.
