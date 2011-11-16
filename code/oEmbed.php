@@ -76,7 +76,7 @@ class oEmbed {
 		return false;
 	}
 	
-	public static function get_oembed_from_url($url, $type = false) {
+	public static function get_oembed_from_url($url, $type = false, Array $options = array()) {
 		$endpoint = static::match_url($url);
 		$ourl = false;
 		if(!$endpoint) {
@@ -89,8 +89,32 @@ class oEmbed {
 			$ourl = Controller::join_links($endpoint, '?format=json&url=' . rawurlencode($url));
 		}
 		if($ourl) {
+			if($options) {
+				if(isset($options['width']) && !isset($options['maxwidth'])) {
+					$options['maxwidth'] = $options['width'];
+				}
+				if(isset($options['height']) && !isset($options['maxheight'])) {
+					$options['maxheight'] = $options['height'];
+				}
+				$ourl = Controller::join_links($ourl, '?' . http_build_query($options, '', '&'));
+			}
 			return new oEmbed_Result($ourl, $url, $type);
 		}
 		return false;
+	}
+	
+	public static function handle_shortcode($arguments, $url, $parser, $shortcode) {
+		if(isset($arguments['type'])) {
+			$type = $arguments['type'];
+			unset($arguments['type']);
+		} else {
+			$type = false;
+		}
+		$oembed = self::get_oembed_from_url($url, $type, $arguments);
+		if($oembed && $oembed->exists()) {
+			return $oembed->forTemplate();
+		} else {
+			return '<a href="' . $url . '">' . $url . '</a>';
+		}
 	}
 }
