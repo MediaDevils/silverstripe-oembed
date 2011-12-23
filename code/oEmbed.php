@@ -6,16 +6,16 @@ class oEmbed {
 	protected static $autodiscover_fallback = false;
 	
 	public static function set_autodiscover_fallback($val) {
-		static::$autodiscover_fallback = (bool)$val;
+		self::$autodiscover_fallback = (bool)$val;
 	}
 	
 	public static function add_providers() {
 		$args = func_get_args();
 		if($args) {
 			if(is_array($args[0])) {
-				static::$providers += $args[0];
+				self::$providers += $args[0];
 			} elseif(count($args) == 2) {
-				static::$providers[$args[0]] = $args[1];
+				self::$providers[$args[0]] = $args[1];
 			} else {
 				user_error(__METHOD__ . ' expects either an array of providers or a URL scheme and JSON API endpoint');
 			}
@@ -25,8 +25,8 @@ class oEmbed {
 	}
 	
 	protected static function match_url($url) {
-		foreach(static::$providers as $scheme=>$endpoint) {
-			if(static::match_scheme($url, $scheme)) {
+		foreach(self::$providers as $scheme=>$endpoint) {
+			if(self::match_scheme($url, $scheme)) {
 				return $endpoint;
 			}
 		}
@@ -77,14 +77,14 @@ class oEmbed {
 	}
 	
 	public static function get_oembed_from_url($url, $type = false, Array $options = array()) {
-		$endpoint = static::match_url($url);
+		$endpoint = self::match_url($url);
 		$ourl = false;
 		if(!$endpoint) {
-			if(static::$autodiscover_fallback) {
-				$ourl = static::autodiscover_from_url($url);
+			if(self::$autodiscover_fallback) {
+				$ourl = self::autodiscover_from_url($url);
 			}
 		} elseif($endpoint === true) {
-			$ourl = static::autodiscover_from_url($url);
+			$ourl = self::autodiscover_from_url($url);
 		} else {
 			$ourl = Controller::join_links($endpoint, '?format=json&url=' . rawurlencode($url));
 		}
