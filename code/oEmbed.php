@@ -86,7 +86,7 @@ class oEmbed {
 		} elseif($endpoint === true) {
 			$ourl = self::autodiscover_from_url($url);
 		} else {
-			$ourl = Controller::join_links($endpoint, '?format=json&url=' . rawurlencode($url));
+			$ourl = Controller::join_links($endpoint, '?url=' . rawurlencode($url));
 		}
 		if($ourl) {
 			if($options) {
@@ -98,7 +98,10 @@ class oEmbed {
 				}
 				$ourl = Controller::join_links($ourl, '?' . http_build_query($options, '', '&'));
 			}
-			return new oEmbed_Result($ourl, $url, $type);
+			$result = new oEmbed_Result();
+			$oembed = $result->load($ourl);
+			if(is_a($oembed, 'oEmbed_Result_Link')) $oembed->url = $url;
+			return $oembed;
 		}
 		return false;
 	}
