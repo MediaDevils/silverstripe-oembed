@@ -3,7 +3,7 @@ class oEmbed_Result extends RESTClient {
 	public function load($url) {
 		$this->Base = $url;
 		
-		if($response = $this->request(array(), array(CURLOPT_FOLLOWLOCATION => true))) {
+		if($response = $this->request(array(), array(CURLOPT_FOLLOWLOCATION => true, CURLOPT_CONNECTTIMEOUT => 1))) {
 			switch(curl_getinfo($this->curl, CURLINFO_CONTENT_TYPE)) {
 				default:
 				case "application/json":
