@@ -16,17 +16,22 @@ class oEmbed_Result extends RESTClient {
 			if(!$oembed) return false;
 		} else return false;
 		
-		switch($oembed["type"]) {
-			case 'photo':
-				return new oEmbed_Result_Photo($oembed);
-			case 'video':
-				return new oEmbed_Result_Video($oembed);
-			case 'link':
-				return new oEmbed_Result_Link($oembed);
-			case 'rich':
-				return new oEmbed_Result_Rich($oembed);
+		if($result = $this->toResult($oembed)) return $result;
+		else return false;
+	}
+	
+	public function loadData($data, $format) {
+		switch($format) {
+			case 'xml':
+				return $this->toResult($this->fromXML($data));
+			case 'json':
+				return $this->toResult($this->fromJSON($data));
 		}
 		return false;
+	}
+	
+	protected function fromJSON($json) {
+		return json_decode($json, true);
 	}
 	
 	protected function fromXML($xml) {
@@ -57,6 +62,19 @@ class oEmbed_Result extends RESTClient {
 		);
 		
 		return $oembed;
+	}
+	
+	public function toResult($oembed) {
+		switch($oembed["type"]) {
+			case 'photo':
+				return new oEmbed_Result_Photo($oembed);
+			case 'video':
+				return new oEmbed_Result_Video($oembed);
+			case 'link':
+				return new oEmbed_Result_Link($oembed);
+			case 'rich':
+				return new oEmbed_Result_Rich($oembed);
+		}
 	}
 }
 
