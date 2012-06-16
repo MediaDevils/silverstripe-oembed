@@ -95,6 +95,14 @@ abstract class oEmbed_Result_Type extends ViewableData {
 		parent::__construct();
 		foreach($oembed as $key => $value) $this->$key = $value;
 	}
+	
+	public function Thumbnail($width = null, $height = null) {
+		return new oEmbed_Result_Photo(array(
+			"url" => $this->thumbnail_url,
+			"width" => $width?:$this->thumbnail_width,
+			"height" => $height?:$this->thumbnail_height
+		));
+	}
 }
 
 class oEmbed_Result_Photo extends oEmbed_Result_Type {
