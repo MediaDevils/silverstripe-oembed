@@ -127,7 +127,8 @@ class oEmbed_Result_Photo extends oEmbed_Result_Type {
 	public $height;
 	
 	public function forTemplate() {
-		return "<img src=\"{$this->url}\" width=\"{$this->width}\" height=\"{$this->height}\" />";
+		$url = htmlentities($this->url);
+		return "<img src=\"{$url}\" width=\"{$this->width}\" height=\"{$this->height}\" />";
 	}
 }
 
@@ -145,7 +146,9 @@ class oEmbed_Result_Link extends oEmbed_Result_Type {
 	public $url;
 
 	public function forTemplate() {
-		return "<a href=\"{$this->url}\">{$this->title}</a>";
+		$url = htmlentities($this->url);
+		$title = htmlspecialchars($this->title);
+		return "<a href=\"{$url}\">{$title}</a>";
 	}
 }
 
