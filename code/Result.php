@@ -1,6 +1,8 @@
 <?php
 class oEmbed_Result {
 	public function load($url) {
+		$cache = SS_Cache::factory('oembed');
+		if($result = $cache->load(md5($url))) return unserialize($result);
 		if($response = file_get_contents($url)) {
 			switch($this->getContentType($http_response_header)) {
 				default:
@@ -14,8 +16,10 @@ class oEmbed_Result {
 			if(!$oembed) return false;
 		} else return false;
 		
-		if($result = $this->toResult($oembed)) return $result;
-		else return false;
+		if($result = $this->toResult($oembed)) {
+			$cache->save(serialize($result));
+			return $result;
+		} else return false;
 	}
 	
 	public function loadData($data, $format) {
