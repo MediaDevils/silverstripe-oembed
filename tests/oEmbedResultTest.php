@@ -35,6 +35,17 @@ class oEmbedResultTest extends SapphireTest {
 		}
 	}
 	
+	public function testloadUncached() {
+		$cache = SS_Cache::factory('oembed');
+		$cache->clean(Zend_Cache::CLEANING_MODE_ALL);
+	
+		$oembed = new oEmbed_Result();
+		foreach(self::$examples as $scheme => $url) {
+			$result = $oembed->load($url);
+			$this->assertInstanceOf('oEmbed_Result_Type', $result);
+		}
+	}
+	
 	public function testloadData() {
 		$oembed = new oEmbed_Result();
 		
