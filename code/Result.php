@@ -1,13 +1,11 @@
 <?php
-class oEmbed_Result extends RESTClient {
+class oEmbed_Result {
 	public function load($url) {
-		$this->Base = $url;
-		
-		if($response = $this->request(array(), array(CURLOPT_FOLLOWLOCATION => true, CURLOPT_CONNECTTIMEOUT => 1))) {
-			switch(curl_getinfo($this->curl, CURLINFO_CONTENT_TYPE)) {
+		if($response = file_get_contents($url)) {
+			switch($this->getContentType($http_response_header)) {
 				default:
 				case "application/json":
-					$oembed = json_decode($response, true);
+					$oembed = $this->fromJSON($response);
 					break;
 				case "text/xml":
 					$oembed = $this->fromXML($response);
@@ -61,6 +59,11 @@ class oEmbed_Result extends RESTClient {
 			"height" => $xpath->evaluate("//oembed/height")
 		);
 		
+		foreach($oembed as $key => $value)
+			if(is_a($value, 'DOMNodeList') && $value->length > 0)
+				$oembed[$key] = $value->item(0)->textContent;
+			else unset($oembed[$key]);
+		
 		return $oembed;
 	}
 	
@@ -74,6 +77,19 @@ class oEmbed_Result extends RESTClient {
 				return new oEmbed_Result_Link($oembed);
 			case 'rich':
 				return new oEmbed_Result_Rich($oembed);
+		}
+	}
+	
+	public function getContentType($headers) {
+		foreach($headers as $header) {
+			if(strtolower(substr($header, 0, 13)) == "content-type:") {
+				switch(true) {
+					case stristr($header, 'application/json'):
+						return 'application/json';
+					case stristr($header, 'text/xml'):
+						return 'text/xml';
+				}
+			}
 		}
 	}
 }
