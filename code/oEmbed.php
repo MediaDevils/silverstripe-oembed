@@ -24,7 +24,19 @@ class oEmbed {
 		}
 	}
 	
-	protected static function match_url($url) {
+	public static function remove_provider($scheme) {
+		unset(self::$providers[$scheme]);
+	}
+	
+	public static function empty_providers() {
+		self::$providers = array();
+	}
+	
+	public static function get_providers() {
+		return self::$providers;
+	}
+	
+	public static function match_url($url) {
 		foreach(self::$providers as $scheme=>$endpoint) {
 			if(self::match_scheme($url, $scheme)) {
 				return $endpoint;
@@ -33,7 +45,7 @@ class oEmbed {
 		return false;
 	}
 	
-	protected static function match_scheme($url, $scheme) {
+	public static function match_scheme($url, $scheme) {
 		$urlInfo = parse_url($url);
 		$schemeInfo = parse_url($scheme);
 		foreach($schemeInfo as $k=>$v) {
@@ -56,7 +68,7 @@ class oEmbed {
 		return true;
 	}
 	
-	protected static function autodiscover_from_url($url) {
+	public static function autodiscover_from_url($url) {
 		$service = new RestfulService($url);
 		$body = $service->request();
 		if(!$body || $body->isError()) {
