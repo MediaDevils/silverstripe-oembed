@@ -190,20 +190,22 @@ class oEmbed {
 	 * @static
 	 */
 	public static function autodiscover_from_url($url) {
-		$service = new RestfulService($url);
-		$body = $service->request();
-		if(!$body || $body->isError()) {
-			return false;
-		}
-		$body = $body->getBody();
+		$cache = SS_Cache::factory('oembed_autodiscover');
+		if($result = $cache->load(md5($url))) return $result;
+	
+		$body = file_get_contents($url);
 		
 		if(preg_match_all('#<link[^>]+?(?:href=[\'"](.+?)[\'"][^>]+?)?type=["\']application/json\+oembed["\'](?:[^>]+?href=[\'"](.+?)[\'"])?#', $body, $matches, PREG_SET_ORDER)) {
 			$match = $matches[0];
 			if(!empty($match[1])) {
-				return html_entity_decode($match[1]);
+				$result = html_entity_decode($match[1]);
+				$cache->save($result);
+				return $result;
 			}
 			if(!empty($match[2])) {
-				return html_entity_decode($match[2]);
+				$result = html_entity_decode($match[2]);
+				$cache->save($result);
+				return $result;
 			}
 		}
 		return false;
