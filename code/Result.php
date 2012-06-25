@@ -39,7 +39,12 @@ class oEmbed_Result {
 	public function load($url) {
 		$cache = SS_Cache::factory('oembed');
 		if($result = $cache->load(md5($url))) return unserialize($result);
-		if($response = file_get_contents($url)) {
+		$httpContext = stream_context_create(array(
+			'http' => array(
+				'ignore_errors' => true
+			)
+		));
+		if($response = file_get_contents($url, false, $httpContext)) {
 			switch($this->getContentType($http_response_header)) {
 				default:
 				case "application/json":
