@@ -111,33 +111,14 @@ class oEmbed_Result {
 		
 		$xpath = new DOMXPath($document);
 		
-		$oembed = array(
-			"type" => $xpath->evaluate("//oembed/type"),
-			"version" => $xpath->evaluate("//oembed/version"),
-			"title" => $xpath->evaluate("//oembed/title"),
-			"author_name" => $xpath->evaluate("//oembed/author_name"),
-			"author_url" => $xpath->evaluate("//oembed/author_url"),
-			"provider_name" => $xpath->evaluate("//oembed/provider_name"),
-			"provider_url" => $xpath->evaluate("//oembed/provider_url"),
-			"cache_age" => $xpath->evaluate("//oembed/cache_age"),
-			"thumbnail_url" => $xpath->evaluate("//oembed/thumbnail_url"),
-			"thumbnail_width" => $xpath->evaluate("//oemebed/thumbnail_width"),
-			"thumbnail_height" => $xpath->evaluate("//oembed/thumbnail_height"),
-			// photo type
-			"url" => $xpath->evaluate("//oembed/url"),
-			// video and rich type
-			"html" => $xpath->evaluate("//oembed/html"),
-			// photo, video and rich type
-			"width" => $xpath->evaluate("//oembed/width"),
-			"height" => $xpath->evaluate("//oembed/height")
-		);
+		$oembed = $xpath->evaluate("//oembed/*");
+		$result = array();
 		
-		foreach($oembed as $key => $value)
-			if(is_a($value, 'DOMNodeList') && $value->length > 0)
-				$oembed[$key] = $value->item(0)->textContent;
-			else unset($oembed[$key]);
+		foreach($oembed as $node) {
+			$result[$node->tagName] = $node->textContent;
+		}
 		
-		return $oembed;
+		return $result;
 	}
 	
 	/**
